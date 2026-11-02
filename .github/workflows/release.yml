@@ -1,0 +1,78 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# On a version tag (make release VERSION=x.y.z, then push the tag): build the extension zip and the
+# daemon's sdist and wheel, and attach them to a GitHub release whose notes come from CHANGELOG.md.
+# PyPI upload is off until the repository variable PUBLISH_PYPI is "true" (it needs a trusted
+# publisher for this repository on PyPI; DESIGN.md §7).
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Tag, version files and changelog agree
+        run: python tools/version.py check --tag "$GITHUB_REF_NAME"
+      - name: Install tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends gnome-shell   # for gnome-extensions pack
+          python -m pip install build dbus-fast pytest
+      - run: make test PYTHON=python
+      - run: make dist PYBUILD="python -m build"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: extension
+          path: dist/*.shell-extension.zip
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        with:
+          name: python
+          path: |
+            dist/*.tar.gz
+            dist/*.whl
+          if-no-files-found: error
+
+  github-release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Create the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 tools/version.py notes > notes.md
+          gh release create "$GITHUB_REF_NAME" dist/* --title "Oyster ${GITHUB_REF_NAME#v}" \
+              --notes-file notes.md --verify-tag
+
+  pypi:
+    needs: build
+    if: vars.PUBLISH_PYPI == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/oysterd/
+    permissions:
+      id-token: write   # trusted publishing; no token stored in the repository
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: python
+          path: dist
+      - uses: pypa/gh-action-pypi-publish@release/v1

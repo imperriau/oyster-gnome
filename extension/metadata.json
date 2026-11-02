@@ -1,0 +1,8 @@
+{
+  "uuid": "oyster@imperriau.github.io",
+  "name": "Oyster",
+  "description": "Requires the companion daemon oysterd, which extensions.gnome.org cannot ship: install it first, see https://github.com/imperriau/oyster-gnome#install\n\nShows an iPhone-style battery card when you open your AirPods case: left, right and case battery, updated live, without connecting the AirPods.\n\nNot affiliated with Apple.",
+  "shell-version": ["49", "50", "51"],
+  "url": "https://github.com/imperriau/oyster-gnome",
+  "version-name": "0.1.0"
+}

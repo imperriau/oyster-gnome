@@ -1,0 +1,86 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# make check, split into jobs: unit tests on every supported Python and the linters once, plus the
+# extension in a real headless Shell of every supported GNOME version.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: pytest (Python ${{ matrix.python }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12", "3.13", "3.14"]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install dbus-fast pytest
+      - run: make test PYTHON=python
+
+  lint:
+    name: ruff, mypy, eslint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: npm
+      - run: make lint-deps PYTHON=python
+      - run: make lint
+
+  headless:
+    name: GNOME Shell ${{ matrix.gnome }}
+    runs-on: ubuntu-latest
+    container: registry.fedoraproject.org/fedora:${{ matrix.fedora }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {gnome: "49", fedora: "43"}
+          - {gnome: "50", fedora: "44"}
+          - {gnome: "51", fedora: "45"}
+    steps:
+      - run: >
+          dnf -y --setopt=install_weak_deps=False install gnome-shell dbus-daemon python3-dbus-fast
+          mesa-dri-drivers mesa-libEGL dejavu-sans-fonts adwaita-icon-theme
+      - uses: actions/checkout@v7
+      - run: test "$(gnome-shell --version | cut -d' ' -f3 | cut -d. -f1)" = "${{ matrix.gnome }}"
+      # The Shell exits at startup without a system bus, and a container does not run one. Nor does
+      # it run logind: the Shell uses its dummy login manager only if /run/systemd/seats is absent.
+      - run: |
+          mkdir -p /run/dbus
+          dbus-daemon --system --fork
+          rm -rf /run/systemd/seats
+      # The Shell should not run as root; the repository checkout stays read-only for it.
+      - run: |
+          useradd tester
+          install -d -o tester /tmp/oyster-headless
+          runuser -u tester -- tools/headless-test.sh /tmp/oyster-headless
+      - if: failure()
+        run: tail -n 60 /tmp/oyster-headless/shell.log
+      - if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: headless-gnome-${{ matrix.gnome }}
+          path: |
+            /tmp/oyster-headless/*.png
+            /tmp/oyster-headless/*.log
+            /tmp/oyster-headless/results

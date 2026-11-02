@@ -1,0 +1,14 @@
+{
+  "name": "oyster-dev-tools",
+  "description": "Lint tooling for the Oyster GNOME Shell extension. Not shipped; see Makefile (make lint).",
+  "license": "GPL-3.0-or-later",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "lint": "eslint extension"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.5",
+    "eslint-config-gnome": "git+https://gitlab.gnome.org/World/javascript/eslint-config-gnome.git#c479d059e8d9ea99c3b53c2ea43abf7fdb05eb51"
+  }
+}

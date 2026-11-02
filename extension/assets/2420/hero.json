@@ -1,0 +1,9 @@
+{
+  "sheet": "hero-sheet.png",
+  "frames": 96,
+  "columns": 12,
+  "rows": 8,
+  "frameWidth": 256,
+  "frameHeight": 256,
+  "fps": 24
+}

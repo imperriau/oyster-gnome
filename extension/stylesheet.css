@@ -1,0 +1,49 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
+.airpods-card {
+    background-color: rgba(28, 28, 30, 0.94);
+    border-radius: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+    padding: 20px 28px;
+    margin-bottom: 64px;
+    spacing: 28px;
+    color: #ffffff;
+}
+
+.airpods-card-art {
+    spacing: 4px;
+}
+
+.airpods-card-info {
+    spacing: 8px;
+    min-width: 200px;
+}
+
+.airpods-card-title {
+    font-weight: bold;
+    font-size: 1.25em;
+    padding-bottom: 4px;
+}
+
+.airpods-card-row {
+    spacing: 12px;
+}
+
+.airpods-card-label {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.airpods-card-percent {
+    font-weight: bold;
+    font-feature-settings: "tnum";
+}
+
+.airpods-ring {
+    width: 34px;
+    height: 34px;
+    -ring-width: 4px;
+    -ring-color: #f2f2f7;
+    -ring-track-color: rgba(255, 255, 255, 0.16);
+    -ring-charging-color: #30d158;
+    -ring-low-color: #ff453a;
+}

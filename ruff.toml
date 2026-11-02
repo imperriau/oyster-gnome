@@ -1,0 +1,22 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Lint and format settings for all Python in the repository (daemon/ and tools/). make lint, make format.
+line-length = 100
+target-version = "py311"
+src = ["daemon"]          # oysterd is first-party for import sorting
+
+[lint]
+select = [
+    "E", "W",   # pycodestyle
+    "F",        # pyflakes
+    "I",        # isort
+    "UP",       # pyupgrade
+    "B",        # bugbear
+    "BLE",      # blind except: every `except Exception` says why
+    "ASYNC",
+    "SIM",
+    "RUF",
+]
+
+[lint.per-file-ignores]
+# dbus-fast reads D-Bus signatures from string return annotations (`-> "b"`); they are not Python names.
+"daemon/oysterd/service.py" = ["F821", "F722"]

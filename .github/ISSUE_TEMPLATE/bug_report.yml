@@ -1,0 +1,57 @@
+name: Bug report
+description: The card does not show, shows wrong values, or something breaks
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what you saw instead.
+    validations:
+      required: true
+  - type: input
+    id: model
+    attributes:
+      label: AirPods or Beats model
+      placeholder: e.g. AirPods Pro 2 (USB-C)
+    validations:
+      required: true
+  - type: input
+    id: distro
+    attributes:
+      label: Distribution and GNOME Shell version
+      description: "`gnome-shell --version`"
+      placeholder: e.g. Fedora 44, GNOME Shell 50.2
+    validations:
+      required: true
+  - type: input
+    id: bluez
+    attributes:
+      label: BlueZ version
+      description: "`bluetoothctl --version`"
+    validations:
+      required: true
+  - type: input
+    id: adapter
+    attributes:
+      label: Bluetooth adapter
+      description: "Internal or USB, and its chipset if you know it (`lsusb` or `lspci`)."
+  - type: input
+    id: version
+    attributes:
+      label: Oyster version or commit
+  - type: textarea
+    id: dump
+    attributes:
+      label: "`make dump` output"
+      description: >
+        Run `make dump`, open and close the case a few times, and paste a few lines.
+        The lines include random Bluetooth addresses that rotate every few minutes; you may
+        replace them with XX:XX:XX:XX:XX:XX.
+      render: text
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: "Relevant lines from `make logs` (daemon) and `make shell-logs` (extension)."
+      render: text

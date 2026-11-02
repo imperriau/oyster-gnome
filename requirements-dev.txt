@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Lint and test tools for the daemon (make lint-deps). Linters are pinned so every machine and CI
+# report the same findings; bump them in one commit together with any fixes they ask for.
+ruff==0.17.3
+mypy==2.4.1
+pytest
+build           # make dist
+dbus-fast>=2.0

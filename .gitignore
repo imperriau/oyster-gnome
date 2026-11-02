@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.venv/
+venv/
+
+# Lint tooling (make lint-deps)
+node_modules/
+
+# Blender: autosaves, backups and raw render output (only the final frames in extension/assets are committed)
+*.blend1
+*.blend2
+*.blend@
+render/
+
+# Test output
+oyster-headless.*/
+
+# Editors and OS
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store

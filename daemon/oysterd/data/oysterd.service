@@ -1,0 +1,32 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Template: `oysterd --install-service` replaces @EXEC@ with the path of the oysterd command.
+[Unit]
+Description=Oyster daemon (AirPods BLE proximity decoder)
+Documentation=https://github.com/imperriau/oyster-gnome
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+# Started on demand through D-Bus activation (io.github.imperriau.Oyster.service).
+Type=dbus
+BusName=io.github.imperriau.Oyster
+Environment=PYTHONUNBUFFERED=1
+ExecStart=@EXEC@
+Restart=on-failure
+RestartSec=3
+
+# Sandboxing. The daemon reads ~/.config/oyster, talks to the system and session buses over
+# AF_UNIX, and writes nothing.
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=yes
+RestrictAddressFamilies=AF_UNIX
+LockPersonality=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+SystemCallArchitectures=native
+
+[Install]
+# Optional: `systemctl --user enable oysterd` starts it at login even without the extension.
+WantedBy=graphical-session.target

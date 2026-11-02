@@ -1,0 +1,27 @@
+name: Model support
+description: Your AirPods or Beats model is not recognised, or is shown with the wrong layout
+labels: [model]
+body:
+  - type: input
+    id: model
+    attributes:
+      label: Model
+      description: The exact product name, as shown in Apple's settings if you have an Apple device.
+    validations:
+      required: true
+  - type: textarea
+    id: dump
+    attributes:
+      label: "`make dump` capture"
+      description: >
+        Run `make dump` and paste the lines for your device while you: open the case with both
+        pods inside, take one pod out, put it back, close the case. Say which line was which if
+        you can. You may replace the Bluetooth addresses with XX:XX:XX:XX:XX:XX.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: truth
+    attributes:
+      label: What the device actually showed
+      description: Battery levels and charging state at the time, if you know them.

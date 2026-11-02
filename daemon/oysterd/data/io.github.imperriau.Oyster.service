@@ -1,0 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Template: `oysterd --install-service` replaces @EXEC@ with the path of the oysterd command.
+[D-BUS Service]
+Name=io.github.imperriau.Oyster
+Exec=@EXEC@
+SystemdService=oysterd.service

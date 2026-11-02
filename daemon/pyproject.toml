@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "oysterd"
+dynamic = ["version"]
+description = "Decode AirPods BLE proximity broadcasts and publish them on the session D-Bus"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["dbus-fast>=2.0"]
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]
+keywords = ["airpods", "beats", "bluetooth", "ble", "battery", "gnome", "dbus", "bluez"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: No Input/Output (Daemon)",
+    "Framework :: AsyncIO",
+    "Intended Audience :: End Users/Desktop",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Desktop Environment :: Gnome",
+    "Topic :: System :: Hardware",
+]
+
+[project.urls]
+Homepage = "https://github.com/imperriau/oyster-gnome"
+Issues = "https://github.com/imperriau/oyster-gnome/issues"
+Changelog = "https://github.com/imperriau/oyster-gnome/blob/main/CHANGELOG.md"
+Source = "https://github.com/imperriau/oyster-gnome"
+
+[project.scripts]
+oysterd = "oysterd.__main__:main"
+
+[tool.setuptools]
+packages = ["oysterd", "oysterd.data"]
+
+[tool.setuptools.dynamic]
+version = { attr = "oysterd.__version__" }  # the one version number; tools/version.py
+
+[tool.setuptools.package-data]
+oysterd = ["data/*.service"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.mypy]
+strict = true
+python_version = "3.11"
+files = ["oysterd"]
+# dbus-fast ships type hints, but a few of its methods (wait_for_disconnect) are unannotated.
+untyped_calls_exclude = ["dbus_fast"]
+
+[[tool.mypy.overrides]]
+# dbus-fast reads D-Bus signatures from string return annotations (`-> "b"`), which are not types.
+module = "oysterd.service"
+disable_error_code = ["name-defined", "valid-type"]
